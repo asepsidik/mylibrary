@@ -79,3 +79,17 @@ function edit_data($data)
     mysqli_query($conn, $update_data);
     return mysqli_affected_rows($conn);
 }
+
+// search
+function search($keyword)
+{
+    $query_search = "SELECT * FROM books
+                        WHERE
+                        no_isbn LIKE '%$keyword%' OR
+                        title LIKE '%$keyword%' OR
+                        author LIKE '%$keyword%' OR
+                        publisher LIKE '%$keyword%' OR 
+                        genre LIKE '%$keyword%'
+                        ";
+    return query($query_search);
+}

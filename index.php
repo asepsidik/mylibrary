@@ -1,7 +1,8 @@
 <?php
 require 'functions.php';
-$get_books = query("SELECT * FROM books");
+$get_books = query("SELECT * FROM books ORDER BY publication_year DESC");
 
+// add data
 if (isset($_POST["submit"])) {
     // cek apakah data berhasil ditambahkan / gagal
     if (add_data($_POST) > 0) {
@@ -16,6 +17,12 @@ if (isset($_POST["submit"])) {
         </script>";
     }
 }
+
+// search data
+if (isset($_POST["search"])) {
+    $get_books = search($_POST["keyword"]);
+}
+
 
 ?>
 
@@ -34,14 +41,24 @@ if (isset($_POST["submit"])) {
     <main class="container">
 
 
-        <h1>MyLibrary Collection Books</h1>
+        <h1 class="mt-3 text-center">MyLibrary Collection Books</h1>
 
-        <!-- <button>Add Book</button> -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-            <strong>Add Book</strong>
-        </button>
+        <nav class="navbar mt-3">
+            <div class="container-fluid">
+                <!-- Add Book -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <strong>Add Book</strong>
+                </button>
 
-        <!-- Modal -->
+                <!-- form search -->
+                <form class="d-flex" action="" method="POST">
+                    <input class="form-control me-2" name="keyword" type="search" placeholder="Search book here.." aria-label="Search" size="35" autofocus autocomplete="off">
+                    <button class="btn btn-outline-primary" type="submit" name="search"><strong>Search</strong></button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Modal Add Data -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
