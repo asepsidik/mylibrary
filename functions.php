@@ -28,7 +28,11 @@ function add_data($data_form)
     $language = htmlspecialchars($data_form["language"]);
     $genre = htmlspecialchars($data_form["genre"]);
     $pages = htmlspecialchars($data_form["pages"]);
-    $cover = htmlspecialchars($data_form["cover"]);
+    // upload gambar
+    $cover = upload();
+    if (!$cover) { //untuk mengecek jika upload gambar gagal, maka fungsi add_data tidak akan dijalankan
+        return false;
+    }
 
     // query insert data to db
     $query_insert_data = "INSERT INTO books
@@ -40,6 +44,53 @@ function add_data($data_form)
     return mysqli_affected_rows($conn);
 }
 
+function upload()
+{
+    // ambil data dari $_FILES
+    $imgName = $_FILES['cover']['name']; //untuk mendapatkan nama gambar beserta ektensinya
+    $imgSize = $_FILES['cover']['size'];
+    $error = $_FILES['cover']['error']; //untuk mengecek apakah ada gambar yg diupload/tidak
+    $tmpName = $_FILES['cover']['tmp_name']; //tempat penyimpanan sementara
+
+    // cek apakah ada tdk  ada gambar yg diupload
+    if ($error === 4) {
+        echo "
+        <script>
+        alert('Image not selected');
+        </script>";
+        return false;
+    }
+
+    //cek apakah yg diupload adalah gambar..?
+    // lakukan pengecekan ext pd file yg diupload
+    $extentionImgValid = ['jpg', 'jpeg', 'png']; //jenis ext img yg diizinkan diupload
+    $extentionImg = explode('.', $imgName); //hasil berupa array contoh : asep.jpg => ['asep','jpg']
+    $extentionImg = strtolower(end($extentionImg)); //untuk mendapatkan ekstensi gambar dan dirubah ke huruf kecil
+    if (!in_array($extentionImg, $extentionImgValid)) {
+        //in_array fungsi untuk mengecek apakah ada string tertentu pada sebuah array
+        echo "
+        <script>
+        alert('the uploaded data is not an image');
+        </script>";
+        return false;
+    }
+
+    // cek ukuran gambar, contoh maksimal gambar 1Mb
+    if ($imgSize >= 1000000) {
+        echo "<script>
+        alert('maximum image size 1 Mb');
+        </script>";
+        return false;
+    }
+
+    // lolos pengecekan/ gambar siap diupload
+    //generate name baru untuk gambar dengan cara mmanggil fungsi bilangan random  
+    $newImgName = uniqid();
+    $newImgName .= ".";
+    $newImgName .= $extentionImg;
+    move_uploaded_file($tmpName, 'img/' . $newImgName);
+    return $newImgName;
+}
 
 function delete($id)
 {
@@ -62,7 +113,15 @@ function edit_data($data)
     $language = htmlspecialchars($data["language"]);
     $genre = htmlspecialchars($data["genre"]);
     $pages = htmlspecialchars($data["pages"]);
-    $cover = htmlspecialchars($data["cover"]);
+
+    $oldImg = $data["oldImg"];
+    // cek apakah user pilih gambar baru / tidak
+    if ($_FILES['cover']['error'] === 4) {
+        $cover = $oldImg;
+    } else {
+        $cover = upload();
+    }
+
 
     $update_data = "UPDATE books SET 
                         no_isbn = '$no_isbn',
@@ -79,6 +138,8 @@ function edit_data($data)
     mysqli_query($conn, $update_data);
     return mysqli_affected_rows($conn);
 }
+
+
 
 // search
 function search($keyword)

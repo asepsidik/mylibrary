@@ -45,7 +45,8 @@ if (isset($_POST["submit"])) {
                     <h5 class="modal-title" id="staticBackdropLabel">Edit Data Book</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="post" class="m-2">
+                    <form action="" method="post" class="m-2" enctype="multipart/form-data">
+                        <input type="hidden" name="oldImg" value="<?= $get_books["cover"]; ?>">
                         <div class="row mb-3">
                             <label for="id" class="col-sm-2 col-form-label col-form-label-sm">ID</label>
                             <div class="col-sm-10">
@@ -102,8 +103,9 @@ if (isset($_POST["submit"])) {
                         </div>
                         <div class="row mb-3">
                             <label for="cover" class="col-sm-2 col-form-label col-form-label-sm">Cover</label>
+                            <img src="img/<?= $get_books["cover"]; ?>" alt="" width="30">
                             <div class="col-sm-10">
-                                <input type="text" class="form-control form-control-sm" id="cover" name="cover" value="<?= $get_books["cover"]; ?>">
+                                <input type="file" class="form-control form-control-sm" id="cover" name="cover">
                             </div>
                         </div>
                         <div class="row">

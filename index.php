@@ -4,6 +4,9 @@ $get_books = query("SELECT * FROM books ORDER BY publication_year DESC");
 
 // add data
 if (isset($_POST["submit"])) {
+    // var_dump($_POST);
+    // var_dump($_FILES);
+    // die;
     // cek apakah data berhasil ditambahkan / gagal
     if (add_data($_POST) > 0) {
         echo "<script>
@@ -17,6 +20,8 @@ if (isset($_POST["submit"])) {
         </script>";
     }
 }
+
+
 
 // search data
 if (isset($_POST["search"])) {
@@ -66,11 +71,11 @@ if (isset($_POST["search"])) {
                         <h5 class="modal-title" id="staticBackdropLabel">Add New Book</h5>
                     </div>
                     <div class="modal-body">
-                        <form action="" method="post" class="m-2">
+                        <form action="" method="post" class="m-2" enctype="multipart/form-data">
                             <div class="row mb-3">
                                 <label for="no_isbn" class="col-sm-2 col-form-label col-form-label-sm">No ISBN</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="no_isbn" name="no_isbn" placeholder="No ISBN" required>
+                                    <input type="text" class="form-control form-control-sm" id="no_isbn" name="no_isbn" placeholder="No ISBN">
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -118,7 +123,7 @@ if (isset($_POST["search"])) {
                             <div class="row mb-3">
                                 <label for="cover" class="col-sm-2 col-form-label col-form-label-sm">Cover</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="cover" name="cover" placeholder="Cover">
+                                    <input type="file" class="form-control form-control-sm" id="cover" name="cover" placeholder="Cover">
                                 </div>
                             </div>
                             <div class="row">
