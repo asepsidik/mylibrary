@@ -154,3 +154,38 @@ function search($keyword)
                         ";
     return query($query_search);
 }
+
+
+function registrasi($data)
+{
+    global $conn;
+
+    $username = strtolower(stripslashes($data["username"]));
+    $password = mysqli_real_escape_string($conn, $data["password"]);
+    $confirm_password = mysqli_real_escape_string($conn, $data["confirm-password"]);
+
+    // cek konfirmasi password
+    if ($password !== $confirm_password) {
+        echo "<script>
+                alert('password does not match');
+                </script>";
+
+        return false;
+    }
+    // cek username, apakah sudah terdaftar di database atau belum
+    $check_username = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");
+    if (mysqli_fetch_assoc($check_username)) {
+        echo "<script>
+                alert('Username is already registered');
+                </script>";
+
+        return false;
+    }
+
+    // enkripsi password yg akan dimasukan ke database
+    $password = password_hash($password, PASSWORD_DEFAULT);
+
+    //tambahkan data user ke databse
+    mysqli_query($conn, "INSERT INTO user VALUES('','$username','$password')");
+    return mysqli_affected_rows($conn);
+}

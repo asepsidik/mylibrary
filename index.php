@@ -21,6 +21,11 @@ if (isset($_POST["submit"])) {
     }
 }
 
+if (isset($_POST["cancel"])) {
+    echo "<script>
+        document.location.href = 'index.php';
+        </script>";
+}
 
 
 // search data
@@ -39,6 +44,7 @@ if (isset($_POST["search"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style/style.css">
     <title>Main Page</title>
 </head>
 
@@ -51,14 +57,14 @@ if (isset($_POST["search"])) {
         <nav class="navbar mt-3">
             <div class="container-fluid">
                 <!-- Add Book -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     <strong>Add Book</strong>
                 </button>
 
                 <!-- form search -->
                 <form class="d-flex" action="" method="POST">
-                    <input class="form-control me-2" name="keyword" type="search" placeholder="Search book here.." aria-label="Search" size="35" autofocus autocomplete="off">
-                    <button class="btn btn-outline-primary" type="submit" name="search"><strong>Search</strong></button>
+                    <input class="form-control form-control-sm me-2" name="keyword" type="search" placeholder="Search book here.." aria-label="Search" size="35" autofocus autocomplete="off">
+                    <button class="btn btn-outline-primary btn-sm" type="submit" name="search"><strong>Search</strong></button>
                 </form>
             </div>
         </nav>
@@ -75,31 +81,31 @@ if (isset($_POST["search"])) {
                             <div class="row mb-3">
                                 <label for="no_isbn" class="col-sm-2 col-form-label col-form-label-sm">No ISBN</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="no_isbn" name="no_isbn" placeholder="No ISBN">
+                                    <input type="text" class="form-control form-control-sm" id="no_isbn" name="no_isbn" placeholder="No ISBN" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="title" class="col-sm-2 col-form-label col-form-label-sm">Title</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="title" name="title" placeholder="Title">
+                                    <input type="text" class="form-control form-control-sm" id="title" name="title" placeholder="Title" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="author" class="col-sm-2 col-form-label col-form-label-sm">Author</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="author" name="author" placeholder="Author">
+                                    <input type="text" class="form-control form-control-sm" id="author" name="author" placeholder="Author" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="publisher" class="col-sm-2 col-form-label col-form-label-sm">Publisher</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="publisher" name="publisher" placeholder="Publisher">
+                                    <input type="text" class="form-control form-control-sm" id="publisher" name="publisher" placeholder="Publisher" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="genre" class="col-sm-2 col-form-label col-form-label-sm">Genre</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control form-control-sm" id="genre" name="genre" placeholder="Genre">
+                                    <input type="text" class="form-control form-control-sm" id="genre" name="genre" placeholder="Genre" required>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -129,7 +135,7 @@ if (isset($_POST["search"])) {
                             <div class="row">
                                 <div class="col">
                                     <button type="submit" name="submit" class="btn btn-primary">Submit</button>
-                                    <button type="cancel" value="cancel" class="btn btn-primary">Cancel</button>
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </div>
 
@@ -140,7 +146,7 @@ if (isset($_POST["search"])) {
         </div>
         </div>
         </div>
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-sm">
             <tr>
                 <thead class="table-dark text-center">
                     <th>No</th>
@@ -159,18 +165,18 @@ if (isset($_POST["search"])) {
             <?php $i = 1; ?>
             <?php foreach ($get_books as $book) : ?>
                 <tr>
-                    <td><?= $i; ?>.</td>
-                    <td><?= $book["no_isbn"]; ?></td>
+                    <td class="text-center"><?= $i; ?>.</td>
+                    <td class="text-center"><?= $book["no_isbn"]; ?></td>
                     <td><?= $book["title"]; ?></td>
                     <td><?= $book["author"]; ?></td>
                     <td><?= $book["publisher"]; ?></td>
                     <td><?= $book["genre"]; ?></td>
-                    <td><?= $book["publication_year"]; ?></td>
+                    <td class="text-center"><?= $book["publication_year"]; ?></td>
                     <td><?= $book["language"]; ?></td>
-                    <td><?= $book["pages"]; ?></td>
-                    <td><img src="img/<?= $book["cover"]; ?>" alt="" width="30"></td>
-                    <td>
-                        <a class="btn btn-success btn-sm mb-1" href="edit.php?id=<?= $book["id"]; ?>">Edit</a>
+                    <td class="text-center"><?= $book["pages"]; ?></td>
+                    <td class="text-center"><img src="img/<?= $book["cover"]; ?>" alt="" width="30"></td>
+                    <td class="text-center">
+                        <a class="btn btn-success btn-sm" href="edit.php?id=<?= $book["id"]; ?>">Edit</a>
                         <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $book["id"]; ?>" onclick="return confirm('Apakah data akan dihapus..?')">Delete</a>
                     </td>
                 </tr>
