@@ -1,13 +1,16 @@
 <?php
+session_start();
+
+if (!isset($_SESSION["login"])) {
+    header("Location: login.php");
+    exit;
+}
+
 require 'functions.php';
 $get_books = query("SELECT * FROM books ORDER BY publication_year DESC");
 
 // add data
 if (isset($_POST["submit"])) {
-    // var_dump($_POST);
-    // var_dump($_FILES);
-    // die;
-    // cek apakah data berhasil ditambahkan / gagal
     if (add_data($_POST) > 0) {
         echo "<script>
         alert('Data BERHASIL ditambahkan');
@@ -44,6 +47,7 @@ if (isset($_POST["search"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/7922542af8.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style/style.css">
     <title>Main Page</title>
 </head>
@@ -51,14 +55,26 @@ if (isset($_POST["search"])) {
 <body>
     <main class="container">
 
+        <nav class="navbar navbar-light mt-3">
+            <div class="container-fluid">
+                <div>
+                    <h4 class="text-secondary">
+                        <i class="fas fa-user mx-2"></i><?= $_SESSION["user"]; ?>
+                    </h4>
+                </div>
+                <a href="logout.php" class="btn btn-outline-secondary btn-sm mt-2"><i class="fas fa-sign-out-alt"> </i> Logout</a>
+            </div>
+        </nav>
+
+
 
         <h1 class="mt-3 text-center">MyLibrary Collection Books</h1>
 
-        <nav class="navbar mt-3">
+        <nav class="navbar mt-5">
             <div class="container-fluid">
                 <!-- Add Book -->
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    <strong>Add Book</strong>
+                    <i class="fas fa-plus"></i><strong> Add Book</strong>
                 </button>
 
                 <!-- form search -->
@@ -176,8 +192,8 @@ if (isset($_POST["search"])) {
                     <td class="text-center"><?= $book["pages"]; ?></td>
                     <td class="text-center"><img src="img/<?= $book["cover"]; ?>" alt="" width="30"></td>
                     <td class="text-center">
-                        <a class="btn btn-success btn-sm" href="edit.php?id=<?= $book["id"]; ?>">Edit</a>
-                        <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $book["id"]; ?>" onclick="return confirm('Apakah data akan dihapus..?')">Delete</a>
+                        <a class="btn btn-success btn-sm" href="edit.php?id=<?= $book["id"]; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
+                        <a class="btn btn-danger btn-sm" href="delete.php?id=<?= $book["id"]; ?>" onclick="return confirm('Apakah data akan dihapus..?')"><i class="fas fa-trash-alt"></i> Delete</a>
                     </td>
                 </tr>
                 <?php $i++; ?>

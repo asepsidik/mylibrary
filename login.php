@@ -1,12 +1,18 @@
 <?php
+session_start();
+if (isset($_SESSION["login"])) {
+    header("Location: index.php");
+}
+
 require 'functions.php';
 
 if (isset($_POST["sign-in"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
+    $_SESSION["user"] = $_POST["username"];
 
     $result = mysqli_query($conn, "SELECT * FROM user where username = '$username'");
-
+    $_SESSION["login"] = true;
     // cek username
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
@@ -31,7 +37,7 @@ if (isset($_POST["sign-in"])) {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/7922542af8.js" crossorigin="anonymous"></script>
 
     <!-- style -->
     <link rel="stylesheet" href="style/style.css">
@@ -54,12 +60,12 @@ if (isset($_POST["sign-in"])) {
                                 <?php endif; ?>
                                 <form action="" method="POST">
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username">
                                     </div>
                                     <div class="input-group mb-3">
-                                        <span class="input-group-text"><i class="bi bi-unlock-fill"></i></span>
-                                        <input type="text" class="form-control" name="password" placeholder="Password" aria-label="Password">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Password">
                                     </div>
 
                                     <div class="row mb-2">
