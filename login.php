@@ -1,22 +1,47 @@
 <?php
 session_start();
+require 'functions.php';
+
+// cek cookie saat program pertamakali dijalankan
+if (isset($_COOKIE['intid']) && isset($_COOKIE['key'])) {
+    $intid = $_COOKIE['intid'];
+    $key = $_COOKIE['key'];
+
+    //    ambil username berdasarkan id
+    $result = mysqli_query($conn, "SELECT username FROM user WHERE id = $intid");
+    $row = mysqli_fetch_assoc($result);
+    $_SESSION["user"] = $row["username"];
+    // cek cookie dan username
+    if ($key === hash('sha256', $row['username'])) {
+        $_SESSION['login'] = true;
+    }
+}
+
 if (isset($_SESSION["login"])) {
     header("Location: index.php");
 }
 
-require 'functions.php';
-
 if (isset($_POST["sign-in"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
-    $_SESSION["user"] = $_POST["username"];
 
     $result = mysqli_query($conn, "SELECT * FROM user where username = '$username'");
-    $_SESSION["login"] = true;
+
     // cek username
     if (mysqli_num_rows($result) === 1) {
+        //cek password
         $row = mysqli_fetch_assoc($result);
         if (password_verify($password, $row["password"])) {
+            //cek session
+            $_SESSION["login"] = true;
+            $_SESSION["user"] = $row["username"];
+            //cek cookie / fitur remember me
+            if (isset($_POST['remember'])) {
+                // create cookie
+                setcookie('intid', $row['id'], time() + 60);
+                setcookie('key', hash('sha256', $row['username']), time() + 60);
+            }
+
             header("Location: index.php");
             exit;
         }
@@ -71,8 +96,8 @@ if (isset($_POST["sign-in"])) {
                                     <div class="row mb-2">
                                         <div class="col-md-5 col-sm-1 text-start">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="gridCheck1">
-                                                <label class="form-check-label" for="gridCheck1">
+                                                <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                                                <label class="form-check-label" for="remember" name="remember">
                                                     Remember
                                                 </label>
 

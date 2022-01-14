@@ -48,8 +48,8 @@ if (isset($_POST["submit"])) {
 
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Edit Data Book</h5>
+                <div class="row text-center modal-header">
+                    <h4 class="modal-title" id="staticBackdropLabel">Edit Data Book</h5>
                 </div>
                 <div class="modal-body">
                     <form action="" method="post" class="m-2" enctype="multipart/form-data">
@@ -110,15 +110,15 @@ if (isset($_POST["submit"])) {
                         </div>
                         <div class="row mb-3">
                             <label for="cover" class="col-sm-2 col-form-label col-form-label-sm">Cover</label>
-                            <img src="img/<?= $get_books["cover"]; ?>" alt="" width="30">
-                            <div class="col-sm-10">
+                            <img src="img/<?= $get_books["cover"]; ?>" alt="" style="width: 200px;">
+                            <div class="col-sm-10 mt-3">
                                 <input type="file" class="form-control form-control-sm" id="cover" name="cover">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col">
                                 <button type="submit" name="submit" class="btn btn-primary">Update</button>
-                                <button type="cancel" value="cancel" class="btn btn-primary">Cancel</button>
+                                <a href="index.php" type="cancel" value="cancel" class="btn btn-secondary">Cancel</a>
                             </div>
                         </div>
 

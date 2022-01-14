@@ -11,6 +11,7 @@ $get_books = query("SELECT * FROM books ORDER BY publication_year DESC");
 
 // add data
 if (isset($_POST["submit"])) {
+    //cek apakah data berhasil ditambahkan / gagal
     if (add_data($_POST) > 0) {
         echo "<script>
         alert('Data BERHASIL ditambahkan');
