@@ -24,6 +24,7 @@ if (isset($_SESSION["login"])) {
 if (isset($_POST["sign-in"])) {
     $username = $_POST["username"];
     $password = $_POST["password"];
+    $_SESSION["keyword"] = "";
 
     $result = mysqli_query($conn, "SELECT * FROM user where username = '$username'");
 

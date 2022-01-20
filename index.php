@@ -7,7 +7,6 @@ if (!isset($_SESSION["login"])) {
 }
 
 require 'functions.php';
-$get_books = query("SELECT * FROM books ORDER BY publication_year DESC");
 
 // add data
 if (isset($_POST["submit"])) {
@@ -31,11 +30,77 @@ if (isset($_POST["cancel"])) {
         </script>";
 }
 
+// $get_books = mysqli_query($conn, "SELECT * FROM books");
 
-// search data
+// search
 if (isset($_POST["search"])) {
-    $get_books = search($_POST["keyword"]);
+    $keyword = $_POST["keyword"];
+    $_SESSION["keyword"] = $keyword;
+} else {
+    $keyword = $_SESSION["keyword"];
 }
+
+// total data hasil pencarian
+$searchDataResult = mysqli_query($conn, "SELECT * FROM books
+                                            WHERE
+                                            no_isbn LIKE '%$keyword%' OR
+                                            title LIKE '%$keyword%' OR
+                                            author LIKE '%$keyword%' OR
+                                            publisher LIKE '%$keyword%' OR 
+                                            genre LIKE '%$keyword%'
+                                            ");
+
+// konfigurasi pagination
+//jumlah data per halaman
+$dataPerPage = 3;
+// hitung total data pada database
+$sumRecordDb = mysqli_num_rows($searchDataResult);
+//menghitung total halaman dengan pembulatan ke atas
+$totalPage = ceil($sumRecordDb / $dataPerPage);
+
+//untuk mengetahui halaman yang sedang aktif 
+// if (isset($_GET["page"])) {
+//     $activePage = $_GET["page"];
+// } else {
+//     $activePage = 1;
+// }
+
+//menggunakan operator ternary
+$activePage = (isset($_GET["page"])) ? $_GET["page"] : 1;
+
+//menentukan data awal berdasarkan halaman yang sedang aktif
+$startOfData = ($dataPerPage * $activePage) - $dataPerPage;
+
+// untuk membatasi jumlah link halaman yang akan ditampilkan
+$totalLink = 1;
+if ($activePage > $totalLink) {
+    $startNumberPage = $activePage - $totalLink;
+} else {
+    $startNumberPage = 1;
+}
+
+if ($activePage < ($totalPage - $totalLink)) {
+    $endNumberPage = $activePage + $totalLink;
+} else {
+    $endNumberPage = $totalPage;
+}
+// end pagination config
+
+// data perhalaman
+$get_books = mysqli_query($conn, "SELECT * FROM books
+                        WHERE
+                        no_isbn LIKE '%$keyword%' OR
+                        title LIKE '%$keyword%' OR
+                        author LIKE '%$keyword%' OR
+                        publisher LIKE '%$keyword%' OR 
+                        genre LIKE '%$keyword%'
+                        ORDER BY publication_year DESC
+                        LIMIT $startOfData, $dataPerPage
+                        ");
+
+
+
+
 
 
 ?>
@@ -67,9 +132,7 @@ if (isset($_POST["search"])) {
             </div>
         </nav>
 
-
-
-        <h1 class="mt-3 text-center">MyLibrary Collection Books</h1>
+        <h1 class="mt-3 text-center">My Collection Books</h1>
 
         <nav class="navbar mt-5">
             <div class="container-fluid">
@@ -80,7 +143,7 @@ if (isset($_POST["search"])) {
 
                 <!-- form search -->
                 <form class="d-flex" action="" method="POST">
-                    <input class="form-control form-control-sm me-2" name="keyword" type="search" placeholder="Search book here.." aria-label="Search" size="35" autofocus autocomplete="off">
+                    <input class="form-control form-control-sm me-2" name="keyword" type="search" placeholder="ISBN / Title / Author / Publisher / Genre" aria-label="Search" size="35" autofocus autocomplete="off">
                     <button class="btn btn-outline-primary btn-sm" type="submit" name="search"><strong>Search</strong></button>
                 </form>
             </div>
@@ -161,8 +224,7 @@ if (isset($_POST["search"])) {
                 </div>
             </div>
         </div>
-        </div>
-        </div>
+
         <table class="table table-striped table-hover table-sm">
             <tr>
                 <thead class="table-dark text-center">
@@ -182,7 +244,9 @@ if (isset($_POST["search"])) {
             <?php $i = 1; ?>
             <?php foreach ($get_books as $book) : ?>
                 <tr>
-                    <td class="text-center"><?= $i; ?>.</td>
+                    <td class="text-center">
+                        <?= $startOfData + $i; ?>
+                        .</td>
                     <td class="text-center"><?= $book["no_isbn"]; ?></td>
                     <td><?= $book["title"]; ?></td>
                     <td><?= $book["author"]; ?></td>
@@ -200,6 +264,61 @@ if (isset($_POST["search"])) {
                 <?php $i++; ?>
             <?php endforeach; ?>
         </table>
+
+        <!-- pagination -->
+        <div class="row">
+            <div class="col">
+                <?php if (isset($_POST["search"])) : ?>
+                    <p class="text-muted">Total record : <?= mysqli_num_rows($searchDataResult) ?> </p>
+                <?php else : ?>
+                    <p class="text-muted">Total record : <?= $sumRecordDb ?> </p>
+                <?php endif; ?>
+            </div>
+
+            <div class="col">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+
+                        <!-- previous page -->
+                        <?php if ($activePage == 1) : ?>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="?page= <?= $activePage - 1; ?>" aria-disabled="true">Previous</a>
+                            </li>
+                        <?php else : ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page= <?= $activePage - 1; ?>">Previous</a>
+                            </li>
+                        <?php endif; ?>
+
+                        <!-- page number -->
+                        <?php for ($i = $startNumberPage; $i <= $endNumberPage; $i++) : ?>
+                            <?php if ($activePage == $i) : ?>
+                                <li class="page-item active">
+                                    <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                                </li>
+                            <?php else : ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                                </li>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <!-- next page -->
+                        <?php if ($activePage == $totalPage) : ?>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="?page= <?= $activePage + 1; ?>" aria-disabled="true">Next</a>
+                            </li>
+                        <?php else : ?>
+                            <li class="page-item">
+                                <a class="page-link" href="?page= <?= $activePage + 1; ?>">Next</a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
 
 
     </main>
